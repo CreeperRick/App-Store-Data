@@ -189,28 +189,50 @@ async function validateMetadata(filePath, dir) {
             // Check each file exists in the repository at the specified commit
             if (metadata.owner && metadata.repo && metadata.commit) {
                 for (const file of metadata.files) {
-                    if (typeof file !== 'string') {
-                        console.log(`      - ❌ File entry must be a string: \`${file}\``);
+                    let filePath;
+                    let displayPath;
+                    
+                    if (typeof file === 'string') {
+                        // String format: direct file path
+                        const cleanFilePath = file.startsWith('/') ? file.substring(1) : file;
+                        filePath = path.posix.join(metadata.path === '/' ? '' : metadata.path, cleanFilePath);
+                        displayPath = file;
+                    } else if (typeof file === 'object' && file !== null) {
+                        // Object format: must have 'source' and 'destination' properties
+                        if (!file.source || !file.destination) {
+                            console.log(`      - ❌ File object must contain 'source' and 'destination' properties: \`${JSON.stringify(file)}\``);
+                            hasErrors = true;
+                            continue;
+                        }
+                        if (typeof file.source !== 'string' || typeof file.destination !== 'string') {
+                            console.log(`      - ❌ File object 'source' and 'destination' must be strings: \`${JSON.stringify(file)}\``);
+                            hasErrors = true;
+                            continue;
+                        }
+                        // Use source path for verification, combined with metadata.path
+                        const cleanSourcePath = file.source.startsWith('/') ? file.source.substring(1) : file.source;
+                        filePath = path.posix.join(metadata.path === '/' ? '' : metadata.path, cleanSourcePath);
+                        displayPath = `${file.source} → ${file.destination}`;
+                    } else {
+                        console.log(`      - ❌ File entry must be a string or object with 'source' and 'destination' properties: \`${file}\``);
                         hasErrors = true;
                         continue;
                     }
                     
                     try {
-                        // Construct path - remove leading slash if present
-                        const filePath = file.startsWith('/') ? file.substring(1) : file;
                         const githubUrl = `https://api.github.com/repos/${metadata.owner}/${metadata.repo}/contents/${filePath}?ref=${metadata.commit}`;
                         const response = await fetch(githubUrl);
 
                         if (response.status === 200) {
-                            console.log(`      - ✅ File exists at commit: \`${file}\``);
+                            console.log(`      - ✅ File exists at commit: \`${displayPath}\``);
                         } else if (response.status === 404) {
-                            console.log(`      - ❌ File not found at commit \`${metadata.commit}...\`: \`${file}\``);
+                            console.log(`      - ❌ File not found at commit \`${metadata.commit}...\`: \`${displayPath}\``);
                             hasErrors = true;
                         } else {
-                            console.log(`      - ⚠️  Could not verify file \`${file}\` (status: ${response.status})`);
+                            console.log(`      - ⚠️  Could not verify file \`${displayPath}\` (status: ${response.status})`);
                         }
                     } catch (error) {
-                        console.log(`      - ⚠️  Could not verify file \`${file}\`: ${error.message}`);
+                        console.log(`      - ⚠️  Could not verify file \`${displayPath}\`: ${error.message}`);
                     }
                 }
             } else {
@@ -640,8 +662,8 @@ async function main() {
                 await validateDirectoryFiles(dir, directMetadataFile, directLogoPath);
             } else {
                 // This directory doesn't contain metadata.json directly
-                // Check if it contains subdirectories with metadata.json (repositories/owner/repo/app structure)
-                console.log(`  - 🔍 Checking for repository subdirectories...`);
+                // Check if it contains subdirectories with metadata.json
+                console.log(`  - 🔍 Checking for app subdirectories...`);
                 
                 const subdirs = fs.readdirSync(dir, { withFileTypes: true })
                     .filter(dirent => dirent.isDirectory())
@@ -654,51 +676,17 @@ async function main() {
                     const subdirLogoPath = path.join(subdirPath, 'logo.png');
                     
                     if (fs.existsSync(subdirMetadataFile)) {
-                        // Direct metadata.json in repo directory
                         foundApps = true;
-                        console.log(`  - 📁 Repository: \`${subdir}\``);
+                        console.log(`  - 📁 App subdirectory: \`${subdir}\``);
                         await validateDirectoryFiles(subdirPath, subdirMetadataFile, subdirLogoPath);
-                    } else {
-                        // Check for app subdirectories within this repo directory
-                        console.log(`  - 📁 Repository: \`${subdir}\``);
-                        console.log(`    - 🔍 Checking for app subdirectories...`);
-                        
-                        try {
-                            const appSubdirs = fs.readdirSync(subdirPath, { withFileTypes: true })
-                                .filter(dirent => dirent.isDirectory())
-                                .map(dirent => dirent.name);
-                            
-                            let foundAppsInRepo = false;
-                            for (const appSubdir of appSubdirs) {
-                                const appSubdirPath = path.join(subdirPath, appSubdir);
-                                const appMetadataFile = path.join(appSubdirPath, 'metadata.json');
-                                const appLogoPath = path.join(appSubdirPath, 'logo.png');
-                                
-                                if (fs.existsSync(appMetadataFile)) {
-                                    foundApps = true;
-                                    foundAppsInRepo = true;
-                                    console.log(`    - 📁 App subdirectory: \`${appSubdir}\``);
-                                    await validateDirectoryFiles(appSubdirPath, appMetadataFile, appLogoPath);
-                                }
-                            }
-                            
-                            if (!foundAppsInRepo) {
-                                console.log(`    - 📄 \`metadata.json\``);
-                                console.log(`      - ❌ File not found in any app subdirectories`);
-                                console.log(`    - 📄 \`logo.png\``);
-                                console.log(`      - ❌ File not found in any app subdirectories`);
-                            }
-                        } catch (error) {
-                            console.log(`    - ❌ Error reading repository directory: ${error.message}`);
-                        }
                     }
                 }
                 
                 if (!foundApps) {
                     console.log(`  - 📄 \`metadata.json\``);
-                    console.log(`    - ❌ File not found in any subdirectories`);
+                    console.log(`    - ❌ File not found`);
                     console.log(`  - 📄 \`logo.png\``);
-                    console.log(`    - ❌ File not found in any subdirectories`);
+                    console.log(`    - ❌ File not found`);
                 }
             }
 
