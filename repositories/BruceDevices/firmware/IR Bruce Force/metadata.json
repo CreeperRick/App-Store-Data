@@ -1,7 +1,7 @@
 {
   "name": "IR Bruce Force",
   "description": "Brute force IR remote control codes",
-  "category": "IR",
+  "category": "Infrared",
   "version": "1.0.0",
   "commit": "300f5d00ba00599105e3b1d8790f3c6bf3f4f512",
   "owner": "BruceDevices",
