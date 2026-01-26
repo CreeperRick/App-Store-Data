@@ -616,9 +616,38 @@ ${comment.body}
 
 // Main validation logic
 async function main() {
-    const changedFiles = process.argv.slice(2).join(' ').split(' ').filter(f => f.trim());
+    // Get actual changed files from git
+    const changedFiles = gitCommand('git diff --name-only HEAD~1 HEAD') || gitCommand('git diff --name-only origin/main HEAD');
+    
+    if (!changedFiles) {
+        console.log('No changed files detected');
+        return;
+    }
 
-    console.log('Changed directories:', changedFiles.join(' '));
+    const changedFileList = changedFiles.split('\n').filter(f => f.trim());
+    console.log('Changed files:', changedFileList.join(', '));
+
+    // Find directories containing metadata.json files that were changed
+    const metadataDirectories = [];
+    
+    for (const file of changedFileList) {
+        if (file.endsWith('metadata.json')) {
+            const metadataDir = path.dirname(file);
+            const metadataPath = path.join(metadataDir, 'metadata.json');
+            const logoPath = path.join(metadataDir, 'logo.png');
+            
+            // Check if both files exist in filesystem
+            if (fs.existsSync(metadataPath)) {
+                metadataDirectories.push({
+                    directory: metadataDir,
+                    metadataFile: metadataPath,
+                    logoFile: logoPath
+                });
+            }
+        }
+    }
+
+    console.log(`Found ${metadataDirectories.length} directories with changed metadata.json files`);
 
     // Initialize metadata info file for PR comment
     fs.writeFileSync('/tmp/metadata_info.txt', '');
@@ -645,87 +674,16 @@ async function main() {
     let hasInvalidMetadata = false;
     let hasMissingLogo = false;
 
-    console.log('📂 Processing changed directories...');
+    console.log('📂 Processing changed metadata.json files...');
     console.log('');
 
-    // Check each changed directory for metadata.json
-    for (const dir of changedFiles) {
-        if (fs.existsSync(dir) && fs.statSync(dir).isDirectory()) {
-            console.log(`- 📁 Directory: \`${dir}\``);
-
-            // Check if this directory directly contains metadata.json
-            const directMetadataFile = path.join(dir, 'metadata.json');
-            const directLogoPath = path.join(dir, 'logo.png');
-            
-            if (fs.existsSync(directMetadataFile)) {
-                // This directory directly contains metadata.json - validate it
-                await validateDirectoryFiles(dir, directMetadataFile, directLogoPath);
-            } else {
-                // This directory doesn't contain metadata.json directly
-                // Check if it contains subdirectories with metadata.json (repositories/owner/repo/app structure)
-                console.log(`  - 🔍 Checking for repository subdirectories...`);
-                
-                const subdirs = fs.readdirSync(dir, { withFileTypes: true })
-                    .filter(dirent => dirent.isDirectory())
-                    .map(dirent => dirent.name);
-                
-                let foundApps = false;
-                for (const subdir of subdirs) {
-                    const subdirPath = path.join(dir, subdir);
-                    const subdirMetadataFile = path.join(subdirPath, 'metadata.json');
-                    const subdirLogoPath = path.join(subdirPath, 'logo.png');
-                    
-                    if (fs.existsSync(subdirMetadataFile)) {
-                        // Direct metadata.json in repo directory
-                        foundApps = true;
-                        console.log(`  - 📁 Repository: \`${subdir}\``);
-                        await validateDirectoryFiles(subdirPath, subdirMetadataFile, subdirLogoPath);
-                    } else {
-                        // Check for app subdirectories within this repo directory
-                        console.log(`  - 📁 Repository: \`${subdir}\``);
-                        console.log(`    - 🔍 Checking for app subdirectories...`);
-                        
-                        try {
-                            const appSubdirs = fs.readdirSync(subdirPath, { withFileTypes: true })
-                                .filter(dirent => dirent.isDirectory())
-                                .map(dirent => dirent.name);
-                            
-                            let foundAppsInRepo = false;
-                            for (const appSubdir of appSubdirs) {
-                                const appSubdirPath = path.join(subdirPath, appSubdir);
-                                const appMetadataFile = path.join(appSubdirPath, 'metadata.json');
-                                const appLogoPath = path.join(appSubdirPath, 'logo.png');
-                                
-                                if (fs.existsSync(appMetadataFile)) {
-                                    foundApps = true;
-                                    foundAppsInRepo = true;
-                                    console.log(`    - 📁 App subdirectory: \`${appSubdir}\``);
-                                    await validateDirectoryFiles(appSubdirPath, appMetadataFile, appLogoPath);
-                                }
-                            }
-                            
-                            if (!foundAppsInRepo) {
-                                console.log(`    - 📄 \`metadata.json\``);
-                                console.log(`      - ❌ File not found in any app subdirectories`);
-                                console.log(`    - 📄 \`logo.png\``);
-                                console.log(`      - ❌ File not found in any app subdirectories`);
-                            }
-                        } catch (error) {
-                            console.log(`    - ❌ Error reading repository directory: ${error.message}`);
-                        }
-                    }
-                }
-                
-                if (!foundApps) {
-                    console.log(`  - 📄 \`metadata.json\``);
-                    console.log(`    - ❌ File not found in any subdirectories`);
-                    console.log(`  - 📄 \`logo.png\``);
-                    console.log(`    - ❌ File not found in any subdirectories`);
-                }
-            }
-
-            console.log('');
-        }
+    // Validate each directory with changed metadata.json
+    for (const { directory, metadataFile, logoFile } of metadataDirectories) {
+        console.log(`- 📁 Directory: \`${directory}\``);
+        metadataFound = true;
+        
+        await validateDirectoryFiles(directory, metadataFile, logoFile);
+        console.log('');
     }
 
     async function validateDirectoryFiles(dirPath, metadataFile, logoPath) {
