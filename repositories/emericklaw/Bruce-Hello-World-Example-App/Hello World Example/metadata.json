@@ -8,6 +8,9 @@
   "repo": "Bruce-Hello-World-Example-App",
   "path": "/",
   "files": [
-    { "source":"Hello World Example.js", "destination":"Hello World.js" }
+    {
+      "source": "Hello World Example.js",
+      "destination": "Hello World.js"
+    }
   ]
 }
