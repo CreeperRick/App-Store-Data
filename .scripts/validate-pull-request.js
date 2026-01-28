@@ -703,7 +703,7 @@ async function managePRLabels(hasMetadataIssues, hasMissingMetadata, hasInvalidM
 }
 
 // Function to post PR comment
-async function postPRComment(validationSuccess, repositoryValidationDetails, summary, metadataInfo) {
+async function postPRComment(validationSuccess, individualAppDetails, summary, metadataInfo) {
     if (process.env.GITHUB_EVENT_NAME !== 'pull_request') {
         console.log('Not a pull request, skipping PR comment');
         return;
@@ -723,21 +723,16 @@ async function postPRComment(validationSuccess, repositoryValidationDetails, sum
 
     const [owner, repo] = repository.split('/');
 
-    // Build validation details sections for each repository
-    let validationDetailsSection = '';
-    for (const [repoKey, { validationOutput, metadataInfo: repoMetadataInfo }] of repositoryValidationDetails) {
-        validationDetailsSection += `### 📋 Repository: ${repoKey}\n\n`;
-        
-        // Include metadata info for this repository if available
-        if (repoMetadataInfo && repoMetadataInfo.trim()) {
-            validationDetailsSection += `**📦 Apps/Components:**\n\n`;
-            validationDetailsSection += repoMetadataInfo;
-            validationDetailsSection += `\n`;
+    // Build individual app sections
+    let appDetailsSection = '';
+    for (const { metadataInfo: appMetadataInfo, validationOutput } of individualAppDetails) {
+        if (appMetadataInfo && appMetadataInfo.trim()) {
+            appDetailsSection += appMetadataInfo;
+            appDetailsSection += `🔍 **Validation Steps**\n\n`;
+            appDetailsSection += `<details>\n<summary>View Details</summary>\n\n`;
+            appDetailsSection += validationOutput;
+            appDetailsSection += `\n</details>\n\n`;
         }
-        
-        validationDetailsSection += `<details>\n<summary>🔍 Validation Details</summary>\n\n`;
-        validationDetailsSection += validationOutput;
-        validationDetailsSection += `\n</details>\n\n`;
     }
 
     let commentBody;
@@ -746,15 +741,14 @@ async function postPRComment(validationSuccess, repositoryValidationDetails, sum
         commentBody = `## ✅ Validation Passed
 
 ### 📦 Updated Apps/Components:
-${metadataInfo || '_No metadata changes detected_'}
 
-${validationDetailsSection}`;
+${appDetailsSection}`;
     } else {
         commentBody = `## ❌ Validation Failed
 
-${metadataInfo ? `### 📦 Apps/Components Being Updated:
-${metadataInfo}
-` : ''}${validationDetailsSection}
+### 📦 Apps/Components Being Updated:
+
+${appDetailsSection}
 ### Summary of Issues:
 
 ${summary}
@@ -939,13 +933,10 @@ async function main() {
 
     // Initialize metadata info collection
     let allMetadataInfo = '';
-    let repositoryValidationDetails = new Map(); // Store validation details per repository
+    let individualAppDetails = []; // Store details for each individual app
 
     // Process each repository group
     for (const [repoKey, { owner, repo, directories }] of repoGroups) {
-        let repoValidationOutput = '';
-        let repoMetadataInfo = '';
-        
         if (owner && repo) {
             console.log(`📋 Repository: ${repoKey}`);
             console.log('');
@@ -982,7 +973,13 @@ async function main() {
             
             // Add metadata info if we got it
             if (result.directoryMetadataInfo) {
-                repoMetadataInfo += result.directoryMetadataInfo;
+                allMetadataInfo += result.directoryMetadataInfo;
+                
+                // Store individual app details
+                individualAppDetails.push({
+                    metadataInfo: result.directoryMetadataInfo,
+                    validationOutput: directoryOutput.trim()
+                });
                 
                 // Show metadata summary for this directory
                 console.log('📋 **Metadata Summary:**');
@@ -990,25 +987,9 @@ async function main() {
                 console.log('');
             }
             
-            // Add this directory's validation output to the repository output
-            repoValidationOutput += `📁 Directory: \`${directory}\`\n`;
-            repoValidationOutput += directoryOutput;
-            repoValidationOutput += '\n';
-            
             console.log('─'.repeat(80));
             console.log('');
         }
-        
-        // Store this repository's validation details
-        if (repoValidationOutput.trim()) {
-            repositoryValidationDetails.set(repoKey, {
-                validationOutput: repoValidationOutput.trim(),
-                metadataInfo: repoMetadataInfo
-            });
-        }
-        
-        // Add to combined metadata info
-        allMetadataInfo += repoMetadataInfo;
         
         if (owner && repo) {
             console.log('═'.repeat(80));
@@ -1110,7 +1091,7 @@ async function main() {
     await managePRLabels(!validationSuccess, hasMissingMetadata, hasInvalidMetadata, hasMissingLogo, validationSuccess, isExternalContribution);
 
     // Post PR comment with the collected validation output and metadata info
-    await postPRComment(validationSuccess, repositoryValidationDetails, summary, allMetadataInfo);
+    await postPRComment(validationSuccess, individualAppDetails, summary, allMetadataInfo);
 
     // Exit with appropriate code
     if (!validationSuccess) {
