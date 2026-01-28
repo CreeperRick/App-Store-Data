@@ -1,12 +1,13 @@
 {
   "category": "Utilities",
   "count": 6,
-  "lastUpdated": 1769577087,
+  "lastUpdated": 1769578445,
   "apps": [
     {
       "name": "Calculator",
-      "description": "Calculator - written for T-Embed",
+      "description": "Calculator",
       "version": "1.0.0",
+      "supported-devices": "T-Embed.*",
       "slug": "BruceDevices/firmware/Calculator"
     },
     {
