@@ -196,6 +196,9 @@ async function main() {
             try {
                 // Get the last commit timestamp when this specific category file was modified
                 const gitCommand = `git log -1 --format=%ct --follow -- "releases/${categoryFileName}"`;
+                console.log(`🔍 Running git command: ${gitCommand}`);
+                console.log(`🔍 Working directory: ${path.join(__dirname, '..')}`);
+                
                 const result = execSync(gitCommand, {
                     encoding: 'utf8',
                     stdio: 'pipe',
