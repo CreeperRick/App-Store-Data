@@ -571,7 +571,8 @@ async function validateMetadata(filePath, dir) {
     }
 
     // Write metadata info to return for PR comment
-    let metadataInfo = `**${metadata.name}** (${path.dirname(filePath)})\n`;
+    let metadataInfo = `### ${metadata.name} (${path.dirname(filePath)})\n`;
+    metadataInfo += `${!hasErrors ? '✅ **Validation Passed**' : '❌ **Validation Failed**'}\n`;
     metadataInfo += `- **Repository:** [${metadata.owner}/${metadata.repo}](https://github.com/${metadata.owner}/${metadata.repo})\n`;
     metadataInfo += `- **Path:** \`${metadata.path}\`\n`;
     metadataInfo += `- **Version:** ${versionStatus}\n`;
@@ -725,7 +726,7 @@ async function postPRComment(validationSuccess, individualAppDetails, summary, m
     for (const { metadataInfo: appMetadataInfo, validationOutput } of individualAppDetails) {
         if (appMetadataInfo && appMetadataInfo.trim()) {
             appDetailsSection += appMetadataInfo;
-            appDetailsSection += `<details>\n<summary>🔍 **Validation Steps** (click to expand)</summary>\n\n`;
+            appDetailsSection += `<details>\n<summary>🔍 Validation Steps (click to expand)</summary>\n\n`;
             appDetailsSection += validationOutput;
             appDetailsSection += `\n</details>\n\n`;
         }
@@ -734,39 +735,24 @@ async function postPRComment(validationSuccess, individualAppDetails, summary, m
     let commentBody;
 
     if (validationSuccess) {
-        commentBody = `## ✅ Validation Passed
+        commentBody = `# ✅ Validation Passed
 
-### 📦 Updated Apps/Components:
+## 📦 Updated Apps/Components:
 
 ${appDetailsSection}`;
     } else {
-        commentBody = `## ❌ Validation Failed
+        commentBody = `# ❌ Validation Failed
 
-### 📦 Apps/Components Being Updated:
+## 📦 Apps/Components Being Updated:
 
 ${appDetailsSection}
-### Summary of Issues:
+## Summary of Issues:
 
 ${summary}
 
-### Required metadata.json Format:
-\`\`\`json
-{
-  "name": "App Name",
-  "category": "Tools",
-  "description": "App description",
-  "version": "1.0.0",
-  "commit": "40-character-sha-hash",
-  "owner": "github-username",
-  "repo": "repository-name", 
-  "path": "/"
-}
-\`\`\`
+## Please address the above issues and push new commits to this pull request for re-validation.
 
-**Required Fields:** name, category, description, version, commit, owner, repo, path
-**Version Format:** Must be semantic versioning (X.Y.Z)
-**Commit:** Must be exactly 40 hexadecimal characters
-**Valid Categories:** See [categories.json](../categories.json) for current list`;
+Please check the documentation for guidance on resolving validation errors [here](https://github.com/BruceDevices/App-Store-Data/blob/main/README.md#-common-validation-errors).`;
     }
 
     try {
@@ -779,8 +765,8 @@ ${summary}
             // Find previous validation comments (those starting with validation headers)
             // but exclude ones that are already superseded
             const previousValidationComments = comments.filter(comment =>
-                (comment.body.includes('## ✅ Validation Passed') ||
-                    comment.body.includes('## ❌ Validation Failed')) &&
+                (comment.body.includes('# ✅ Validation Passed') ||
+                    comment.body.includes('# ❌ Validation Failed')) &&
                 !comment.body.includes('🔄 Superseded by new commit')
             );
 
