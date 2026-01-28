@@ -73,7 +73,7 @@ async function main() {
     console.log(`📋 Valid categories: ${validCategories.join(', ')}`);
 
     // Find all metadata files
-    const repositoriesDir = path.join(__dirname, '..', 'repositories');
+    const repositoriesDir = path.join(__dirname, '../..', 'repositories');
     const metadataFiles = findMetadataFiles(repositoriesDir);
     console.log(`📁 Found ${metadataFiles.length} metadata files`);
 
@@ -107,7 +107,7 @@ async function main() {
     console.log(`📊 Processed: ${processedCount}, Skipped: ${skippedCount}`);
 
     // Create releases directory if it doesn't exist
-    const releasesDir = path.join(__dirname, '..', 'releases');
+    const releasesDir = path.join(__dirname, '../..', 'releases');
     if (!fs.existsSync(releasesDir)) {
         fs.mkdirSync(releasesDir, { recursive: true });
         console.log(`📁 Created releases directory`);
