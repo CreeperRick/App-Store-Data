@@ -570,7 +570,7 @@ async function validateMetadata(filePath, dir) {
         console.log(`        - 🚫 No compare link generated`);
     }
 
-    // Write metadata info to temp file for PR comment
+    // Write metadata info to return for PR comment
     let metadataInfo = `**${metadata.name}** (${path.dirname(filePath)})\n`;
     metadataInfo += `- **Repository:** [${metadata.owner}/${metadata.repo}](https://github.com/${metadata.owner}/${metadata.repo})\n`;
     metadataInfo += `- **Path:** \`${metadata.path}\`\n`;
@@ -581,10 +581,7 @@ async function validateMetadata(filePath, dir) {
     }
     metadataInfo += '\n';
 
-    // Append to metadata info file
-    fs.appendFileSync('/tmp/metadata_info.txt', metadataInfo);
-
-    return !hasErrors; // Return true for success, false for errors
+    return { success: !hasErrors, metadataInfo }; // Return success status and metadata info
 }
 
 // Function to manage PR labels
