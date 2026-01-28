@@ -2,6 +2,61 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
+
+// Function to get the last git commit timestamp for files in a category
+function getLastCommitTimestampForCategory(category, categorizedApps) {
+    try {
+        // Get all file paths for this category
+        const categoryApps = categorizedApps[category] || [];
+        const filePaths = categoryApps.map(app => app.filePath + '/metadata.json');
+        
+        if (filePaths.length === 0) {
+            return Math.floor(Date.now() / 1000); // Current time as fallback
+        }
+        
+        // First check if any of these files have uncommitted changes
+        for (const filePath of filePaths) {
+            try {
+                const gitStatusCommand = `git status --porcelain "${filePath}"`;
+                const statusResult = execSync(gitStatusCommand, { 
+                    encoding: 'utf8', 
+                    stdio: 'pipe',
+                    cwd: path.join(__dirname, '..')
+                }).trim();
+                
+                // If file shows up in git status, it has uncommitted changes
+                if (statusResult) {
+                    console.log(`📝 Found uncommitted changes in ${category}: ${filePath}`);
+                    return Math.floor(Date.now() / 1000); // Use current time for uncommitted changes
+                }
+            } catch (statusError) {
+                // Ignore git status errors for individual files
+            }
+        }
+        
+        // Use git log to get the most recent commit timestamp for any of these files
+        const pathArgs = filePaths.map(p => `"${p}"`).join(' ');
+        const gitCommand = `git log -1 --format=%ct --follow -- ${pathArgs}`;
+        
+        const result = execSync(gitCommand, { 
+            encoding: 'utf8', 
+            stdio: 'pipe',
+            cwd: path.join(__dirname, '..')
+        }).trim();
+        
+        if (result) {
+            return parseInt(result);
+        }
+        
+        // Fallback to current time if no commits found
+        return Math.floor(Date.now() / 1000);
+    } catch (error) {
+        console.warn(`⚠️ Could not get git timestamp for category ${category}: ${error.message}`);
+        // Fallback to current time
+        return Math.floor(Date.now() / 1000);
+    }
+}
 
 // Function to recursively find all metadata.json files
 function findMetadataFiles(dir) {
@@ -167,17 +222,9 @@ async function main() {
         // Create categories array with counts and lastUpdated timestamps
         const categoriesWithCounts = categoriesWithReleases.map(category => {
             const categorySlug = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
-            const categoryFilePath = path.join(releasesDir, `category-${categorySlug}.json`);
             
-            // Get last modification time of the category file
-            let lastUpdated = null;
-            try {
-                const stats = fs.statSync(categoryFilePath);
-                lastUpdated = Math.floor(stats.mtime.getTime() / 1000); // Convert to Unix timestamp
-            } catch (error) {
-                // If file doesn't exist yet, use current time
-                lastUpdated = Math.floor(Date.now() / 1000);
-            }
+            // Get last commit timestamp for this category's metadata files
+            const lastUpdated = getLastCommitTimestampForCategory(category, categorizedApps);
             
             return {
                 name: category,
