@@ -55,7 +55,7 @@ function loadMetadata(filePath) {
 // Function to load valid categories
 function loadValidCategories() {
     try {
-        const categoriesPath = path.join(__dirname, '..', 'categories.json');
+        const categoriesPath = path.join(__dirname, '../../', 'categories.json');
         const categoriesContent = fs.readFileSync(categoriesPath, 'utf8');
         return JSON.parse(categoriesContent);
     } catch (error) {
