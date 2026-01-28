@@ -4,101 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// Function to get the last git commit timestamp for files in a category
-function getLastCommitTimestampForCategory(category, categorizedApps) {
-    try {
-        // Get all file paths for this category
-        const categoryApps = categorizedApps[category] || [];
-        const filePaths = categoryApps.map(app => app.filePath + '/metadata.json');
-
-        if (filePaths.length === 0) {
-            console.log(`⚠️ No files found for category ${category}`);
-            return Math.floor(Date.now() / 1000); // Current time as fallback
-        }
-
-        console.log(`🔍 Checking category ${category} with ${filePaths.length} files`);
-
-        // Check if any of these specific files have uncommitted changes
-        let hasUncommittedChanges = false;
-        for (const filePath of filePaths) {
-            try {
-                const gitStatusCommand = `git status --porcelain "${filePath}"`;
-                const statusResult = execSync(gitStatusCommand, {
-                    encoding: 'utf8',
-                    stdio: 'pipe',
-                    cwd: path.join(__dirname, '..')
-                }).trim();
-
-                // If file shows up in git status, it has uncommitted changes
-                if (statusResult) {
-                    console.log(`📝 Found uncommitted changes in ${category}: ${filePath} (${statusResult})`);
-                    hasUncommittedChanges = true;
-                    // Don't break - continue checking to see all uncommitted files
-                }
-            } catch (statusError) {
-                // Ignore git status errors for individual files
-            }
-        }
-
-        // If any files in this category have uncommitted changes, use current time
-        if (hasUncommittedChanges) {
-            console.log(`⏰ Using current time for ${category} due to uncommitted changes`);
-            return Math.floor(Date.now() / 1000);
-        }
-
-        // Get the most recent content change timestamp by checking actual file modifications
-        let mostRecentTimestamp = 0;
-        for (const filePath of filePaths) {
-            try {
-                // First try to get the filesystem modification time
-                const stats = fs.statSync(filePath);
-                const fileModTime = Math.floor(stats.mtime.getTime() / 1000);
-                console.log(`📂 File system time for ${filePath}: ${fileModTime} (${new Date(fileModTime * 1000).toISOString()})`);
-                
-                // Also try to get git blame to see when content was last actually changed
-                const gitBlameCommand = `git log --format=%ct -1 --diff-filter=M -- "${filePath}"`;
-                let gitTimestamp = 0;
-                try {
-                    const result = execSync(gitBlameCommand, {
-                        encoding: 'utf8',
-                        stdio: 'pipe',
-                        cwd: path.join(__dirname, '..')
-                    }).trim();
-                    
-                    if (result) {
-                        gitTimestamp = parseInt(result);
-                        console.log(`📋 Git modification time for ${filePath}: ${gitTimestamp} (${new Date(gitTimestamp * 1000).toISOString()})`);
-                    }
-                } catch (gitError) {
-                    console.log(`⚠️ Git blame failed for ${filePath}, using file system time`);
-                }
-                
-                // Use the older of the two timestamps (git is more reliable for committed content)
-                const timestamp = gitTimestamp > 0 ? gitTimestamp : fileModTime;
-                if (timestamp > mostRecentTimestamp) {
-                    mostRecentTimestamp = timestamp;
-                }
-            } catch (error) {
-                console.log(`❌ Error checking ${filePath}: ${error.message}`);
-            }
-        }
-
-        // If we found at least one valid timestamp, use the most recent
-        if (mostRecentTimestamp > 0) {
-            console.log(`✅ Using git timestamp for ${category}: ${mostRecentTimestamp} (${new Date(mostRecentTimestamp * 1000).toISOString()})`);
-            return mostRecentTimestamp;
-        }
-
-        // Fallback to current time if no commits found
-        console.log(`⚠️ No git timestamps found for ${category}, using current time`);
-        return Math.floor(Date.now() / 1000);
-    } catch (error) {
-        console.warn(`⚠️ Could not get git timestamp for category ${category}: ${error.message}`);
-        // Fallback to current time
-        return Math.floor(Date.now() / 1000);
-    }
-}
-
 // Function to recursively find all metadata.json files
 function findMetadataFiles(dir) {
     const metadataFiles = [];
@@ -260,25 +165,20 @@ async function main() {
     if (categoriesWithReleases.length > 0) {
         const categoriesFilePath = path.join(releasesDir, 'categories.json');
 
-        // Create categories array with counts and lastUpdated timestamps
+// Create categories array with counts (timestamps will be added later)
         const categoriesWithCounts = categoriesWithReleases.map(category => {
             const categorySlug = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
-
-            // Get last commit timestamp for this category's metadata files
-            const lastUpdated = getLastCommitTimestampForCategory(category, categorizedApps);
-
+            
             return {
                 name: category,
                 slug: categorySlug,
-                count: categorizedApps[category].length,
-                lastUpdated: lastUpdated
+                count: categorizedApps[category].length
             };
         }).sort((a, b) => a.name.localeCompare(b.name));
 
         const categoriesData = {
             totalCategories: categoriesWithReleases.length,
             totalApps: Object.values(categorizedApps).reduce((sum, apps) => sum + apps.length, 0),
-            lastUpdated: Math.floor(Date.now() / 1000),
             categories: categoriesWithCounts
         };
 
