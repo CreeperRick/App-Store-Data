@@ -8,6 +8,6 @@
   "repo": "App-Store",
   "path": "/",
   "files": [
-    {"source": "minified/App Store.min.js", "destination": "App Store.js"}
+    {"source": "minified/App Store.js", "destination": "App Store.js"}
   ]
 }
