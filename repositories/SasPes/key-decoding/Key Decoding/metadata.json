@@ -8,7 +8,10 @@
   "repo": "key-decoding",
   "path": "/",
   "files": [
-    "KeyDecoding.js"
+    {
+      "source": "KeyDecoding.js",
+      "destination": "KeyDecoding.js"
+    }
   ],
   "supported-devices": [
     "Lilygo T-Embed",
