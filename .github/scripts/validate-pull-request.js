@@ -712,7 +712,7 @@ async function managePRLabels(hasMetadataIssues, hasMissingMetadata, hasInvalidM
 
 // Function to post PR comment
 async function postPRComment(validationSuccess, individualAppDetails, summary, metadataInfo) {
-    if (process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+    if (process.env.GITHUB_EVENT_NAME !== 'pull_request' && process.env.GITHUB_EVENT_NAME !== 'pull_request_target') {
         console.log('Not a pull request, skipping PR comment');
         return;
     }
