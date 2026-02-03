@@ -56,24 +56,28 @@ jobs:
       run: |
         mkdir -p pr-repo/.github/scripts/
         cp base-repo/.github/scripts/validate-pull-request.js pr-repo/.github/scripts/
-        cd pr-repo
-
-    - name: Get changed files
-      id: changed-files
-      uses: tj-actions/changed-files@v41
-      with:
-        files: '**/*'
-        dir_names: true
-        dir_names_max_depth: 2
-        path: pr-repo
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-
-    - name: Validate pull request and post comment
+        
+    - name: Change to PR directory and validate
       working-directory: pr-repo
+      run: |
+        # Get changed files using git in the PR directory
+        CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
+        echo "Changed files: $CHANGED_FILES"
+        
+        # Set up Node.js environment variables and run validation
+        export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+        export GITHUB_REPOSITORY="${{ github.repository }}"
+        export GITHUB_EVENT_NAME="${{ github.event_name }}"
+        export GITHUB_BASE_REF="${{ github.base_ref }}"
+        export PR_NUMBER="${{ github.event.number }}"
+        
+        # Run the validation script
+        node .github/scripts/validate-pull-request.js $CHANGED_FILES
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_REPOSITORY: ${{ github.repository }}
