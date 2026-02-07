@@ -597,7 +597,7 @@ async function validateMetadata(filePath, dir, prAuthor) {
 
 // Function to manage PR labels
 async function managePRLabels(hasMetadataIssues, hasMissingMetadata, hasInvalidMetadata, hasMissingLogo, validationSuccess, isExternalContribution) {
-    if (process.env.GITHUB_EVENT_NAME !== 'pull_request') {
+    if (process.env.GITHUB_EVENT_NAME !== 'pull_request' && process.env.GITHUB_EVENT_NAME !== 'pull_request_target') {
         return;
     }
 
