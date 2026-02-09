@@ -3,11 +3,11 @@
   "description": "Cool matrix theme",
   "category": "theme",
   "version": "1.0.0",
-  "commit": "40-character-sha-hash-from-your-repository",
+  "commit": "f9dd102fe742f57dd96d985a269c40389077a343",
   "owner": "CreeperRick",
   "repo": "Cyber_Hacker",
   "supported-screen-size": "320x170",
-  "path": "/repositories/CreeperRick/Cyber_Hacker/",
+  "path": "/Cyber_Hacker/",
   "files": [
     "Cyber_Hacker.json",
     "BLE.png",
