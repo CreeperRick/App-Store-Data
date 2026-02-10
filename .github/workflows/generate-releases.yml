@@ -62,6 +62,24 @@ jobs:
             echo "No categories.json to commit"
           fi
 
+      - name: Generate category-all.json
+        run: |
+          node .github/scripts/generate-category-all.js
+
+      - name: Commit category-all.json
+        run: |
+          if [ -f "releases/category-all.json" ]; then
+            git add releases/category-all.json
+            if git diff --staged --quiet; then
+              echo "No category-all.json changes to commit"
+            else
+              git commit -m "Update category-all.json [skip ci]"
+              git push
+            fi
+          else
+            echo "No category-all.json to commit"
+          fi
+
       - name: Invalidate proxy cache
         env:
           PROXY_CACHE_BUST_API_KEY: ${{ secrets.PROXY_CACHE_BUST_API_KEY }}
