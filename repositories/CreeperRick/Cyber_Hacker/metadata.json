@@ -1,5 +1,5 @@
 {
-  "name": "Cyber_Hacker",
+  "name": "Cyber Hacker",
   "description": "Cool matrix theme",
   "category": "Themes",
   "version": "1.0.0",
@@ -9,6 +9,10 @@
   "supported-screen-size": "320x170",
   "path": "/Cyber_Hacker/",
   "files": [
+    { 
+      "source": "Cyber_Hacker.json",
+      "destination": "Cyber Hacker.json"
+    },
     "Cyber_Hacker.json",
     "BLE.gif",
     "Clock.gif",
@@ -20,7 +24,6 @@
     "GPS.gif",
     "IR.gif",
     "JSInterpreter.gif",
-    "JSInterpreter1.gif",
     "LoRa.gif",
     "NRF24.gif",
     "Others.gif",
