@@ -1,0 +1,34 @@
+{
+  "name": "Cyber Hacker",
+  "description": "Cool matrix theme",
+  "category": "Themes",
+  "version": "1.0.0",
+  "commit": "3d3ef8715765a49265250f809b8064c65b131460",
+  "owner": "CreeperRick",
+  "repo": "Cyber_Hacker",
+  "supported-screen-size": "320x170",
+  "path": "/Cyber_Hacker/",
+  "files": [
+    { 
+      "source": "Cyber_Hacker.json",
+      "destination": "Cyber Hacker.json"
+    },
+    "Cyber_Hacker.json",
+    "BLE.gif",
+    "Clock.gif",
+    "Config.gif",
+    "Connect.gif",
+    "Ethernet.gif",
+    "FM.gif",
+    "Files.gif",
+    "GPS.gif",
+    "IR.gif",
+    "JSInterpreter.gif",
+    "LoRa.gif",
+    "NRF24.gif",
+    "Others.gif",
+    "RF.gif",
+    "RFID.gif",
+    "WiFi.gif"
+  ]
+}
