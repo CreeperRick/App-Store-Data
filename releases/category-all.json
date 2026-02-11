@@ -1,8 +1,8 @@
 {
-  "generated": 1770744679,
-  "generatedISO": "2026-02-10T17:31:19.535Z",
+  "generated": 1770807975,
+  "generatedISO": "2026-02-11T11:06:15.746Z",
   "totalCategories": 8,
-  "totalApps": 35,
+  "totalApps": 36,
   "categories": [
     {
       "name": "Audio",
@@ -343,7 +343,7 @@
     {
       "name": "Themes",
       "slug": "themes",
-      "count": 8,
+      "count": 9,
       "apps": [
         {
           "name": "Bruce Theme (GIF)",
@@ -616,9 +616,46 @@
           "slug": "emericklaw/Bruce-Theme/Bruce Theme PNG-480x222px",
           "lastUpdated": 1769978902,
           "metadataPath": "repositories/emericklaw/Bruce-Theme/Bruce Theme PNG-480x222px/metadata.json"
+        },
+        {
+          "name": "Cyber Hacker",
+          "description": "Cool matrix theme",
+          "category": "Themes",
+          "version": "1.0.0",
+          "commit": "3d3ef8715765a49265250f809b8064c65b131460",
+          "owner": "CreeperRick",
+          "repo": "Cyber_Hacker",
+          "supported-screen-size": "320x170",
+          "path": "/Cyber_Hacker/",
+          "files": [
+            {
+              "source": "Cyber_Hacker.json",
+              "destination": "Cyber Hacker.json"
+            },
+            "Cyber_Hacker.json",
+            "BLE.gif",
+            "Clock.gif",
+            "Config.gif",
+            "Connect.gif",
+            "Ethernet.gif",
+            "FM.gif",
+            "Files.gif",
+            "GPS.gif",
+            "IR.gif",
+            "JSInterpreter.gif",
+            "LoRa.gif",
+            "NRF24.gif",
+            "Others.gif",
+            "RF.gif",
+            "RFID.gif",
+            "WiFi.gif"
+          ],
+          "slug": "CreeperRick/Cyber_Hacker",
+          "lastUpdated": 1770807915,
+          "metadataPath": "repositories/CreeperRick/Cyber_Hacker/metadata.json"
         }
       ],
-      "lastUpdated": 1769978902
+      "lastUpdated": 1770807915
     },
     {
       "name": "Tools",
