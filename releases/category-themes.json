@@ -1,6 +1,6 @@
 {
   "category": "Themes",
-  "count": 8,
+  "count": 9,
   "apps": [
     {
       "name": "Bruce Theme (GIF)",
@@ -105,6 +105,18 @@
       "v": "1.3.0",
       "s": "emericklaw/Bruce-Theme/Bruce Theme PNG-480x222px",
       "sss": "480x222"
+    },
+    {
+      "name": "Cyber Hacker",
+      "description": "Cool matrix theme",
+      "version": "1.0.0",
+      "supported-screen-size": "320x170",
+      "slug": "CreeperRick/Cyber_Hacker/Cyber_Hacker",
+      "n": "Cyber Hacker",
+      "d": "Cool matrix theme",
+      "v": "1.0.0",
+      "s": "CreeperRick/Cyber_Hacker/Cyber_Hacker",
+      "sss": "320x170"
     }
   ]
 }
