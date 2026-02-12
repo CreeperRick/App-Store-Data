@@ -7,7 +7,7 @@
   "owner": "BruceDevices",
   "repo": "App-Store-Apps",
   "supported-screen-size": "320x240",
-  "path": "/Modern UI 2 320x240/",
+  "path": "/Themes/Modern UI 2 320x240/",
   "files": [
     {
       "source": "theme.json",

@@ -7,7 +7,7 @@
   "owner": "BruceDevices",
   "repo": "App-Store-Apps",
   "supported-screen-size": "240x135",
-  "path": "/Modern UI 240x135/",
+  "path": "/Themes/Modern UI 240x135/",
   "files": [
     {
       "source": "Theme.json",
