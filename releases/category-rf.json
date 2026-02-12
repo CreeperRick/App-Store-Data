@@ -5,11 +5,11 @@
     {
       "name": "RF Brute Force",
       "description": "Brute force RF signals",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "slug": "BruceDevices/firmware/WiFi Brute Force",
       "n": "RF Brute Force",
       "d": "Brute force RF signals",
-      "v": "1.0.1",
+      "v": "1.0.2",
       "s": "BruceDevices/firmware/WiFi Brute Force"
     }
   ]
