@@ -6,11 +6,11 @@
       "name": "Cricket",
       "description": "Cricket.js is an audio app that plays cricket sounds.",
       "version": "1.0.0",
-      "slug": "sloth632/Cricket-app/Cricket-app",
+      "slug": "sloth632/Cricket-app/Cricket",
       "n": "Cricket",
       "d": "Cricket.js is an audio app that plays cricket sounds.",
       "v": "1.0.0",
-      "s": "sloth632/Cricket-app/Cricket-app"
+      "s": "sloth632/Cricket-app/Cricket"
     },
     {
       "name": "DTMF Tones",
@@ -26,11 +26,11 @@
       "name": "Nokia",
       "description": "plays Nokia ringtone",
       "version": "1.0.0",
-      "slug": "sloth632/Nokia-app/Nokia-app",
+      "slug": "sloth632/Nokia-app/Nokia",
       "n": "Nokia",
       "d": "plays Nokia ringtone",
       "v": "1.0.0",
-      "s": "sloth632/Nokia-app/Nokia-app"
+      "s": "sloth632/Nokia-app/Nokia"
     },
     {
       "name": "Tone Generator",
