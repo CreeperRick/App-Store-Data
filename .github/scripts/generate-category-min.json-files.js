@@ -125,7 +125,7 @@ async function main() {
 
         // Filter out unwanted fields from apps for category files
         const filteredApps = apps.map(app => {
-            const { commit, owner, repo, path, filePath, category, files, name, description, version, 'supported-devices': supportedDevices, ...cleanApp } = app;
+            const { commit, owner, repo, path, filePath, category, files, name, description, version, 'supported-devices': supportedDevices, 'supported-screen-size': supportedScreenSize, ...cleanApp } = app;
             // Add slug in format: owner/repo/subfolder_name
             const subfolderName = filePath.split('/').pop();
             const slug = `${owner}/${repo}/${subfolderName}`;
@@ -143,8 +143,8 @@ async function main() {
             }
 
             // Include supported-screen-size if present (themes only)
-            if (app['supported-screen-size'] && isTheme) {
-                cleanApp['sss'] = app['supported-screen-size'];
+            if (supportedScreenSize && isTheme) {
+                cleanApp['sss'] = supportedScreenSize;
             }
 
             return cleanApp;
