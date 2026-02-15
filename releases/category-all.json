@@ -1,8 +1,8 @@
 {
-  "generated": 1771080908,
-  "generatedISO": "2026-02-14T14:55:08.161Z",
+  "generated": 1771123186,
+  "generatedISO": "2026-02-15T02:39:46.602Z",
   "totalCategories": 8,
-  "totalApps": 52,
+  "totalApps": 53,
   "categories": [
     {
       "name": "Audio",
@@ -343,7 +343,7 @@
     {
       "name": "Themes",
       "slug": "themes",
-      "count": 25,
+      "count": 26,
       "apps": [
         {
           "name": "Bebra First Creation",
@@ -687,6 +687,42 @@
           "slug": "CreeperRick/Cyber_Hacker/Cyber Hacker",
           "lastUpdated": 1771039116,
           "metadataPath": "repositories/CreeperRick/Cyber_Hacker/Cyber Hacker/metadata.json"
+        },
+        {
+          "name": "Cyber Hacker v2",
+          "description": "Cool matrix theme, JS Interpreter menu is called 'Games'",
+          "category": "Themes",
+          "version": "1.0.0",
+          "commit": "c3209cae9c2c4d7d07553e008c59d83bf0ce221b",
+          "owner": "CreeperRick",
+          "repo": "Cyber_Hacker",
+          "supported-screen-size": "320x170",
+          "path": "/Cyber_Hacker/",
+          "files": [
+            {
+              "source": "Cyber_Hacker.json",
+              "destination": "Cyber Hacker v2.json"
+            },
+            "BLE.gif",
+            "Clock.gif",
+            "Config.gif",
+            "Connect.gif",
+            "Ethernet.gif",
+            "FM.gif",
+            "Files.gif",
+            "GPS.gif",
+            "IR.gif",
+            "JSInterpreter1.gif",
+            "LoRa.gif",
+            "NRF24.gif",
+            "Others.gif",
+            "RF.gif",
+            "RFID.gif",
+            "WiFi.gif"
+          ],
+          "slug": "CreeperRick/Cyber_Hacker/Cyber Hacker v2",
+          "lastUpdated": 1771123164,
+          "metadataPath": "repositories/CreeperRick/Cyber_Hacker/Cyber Hacker v2/metadata.json"
         },
         {
           "name": "Cyberpunk 2077",
@@ -1203,7 +1239,7 @@
           "metadataPath": "repositories/BruceDevices/App-Store-Apps/Watch Dogs 320x170/metadata.json"
         }
       ],
-      "lastUpdated": 1771039116
+      "lastUpdated": 1771123164
     },
     {
       "name": "Tools",
