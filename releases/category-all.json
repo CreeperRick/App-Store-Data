@@ -1,8 +1,8 @@
 {
-  "generated": 1771352320,
-  "generatedISO": "2026-02-17T18:18:40.044Z",
+  "generated": 1771432176,
+  "generatedISO": "2026-02-18T16:29:36.336Z",
   "totalCategories": 8,
-  "totalApps": 55,
+  "totalApps": 56,
   "categories": [
     {
       "name": "Audio",
@@ -316,8 +316,25 @@
     {
       "name": "RF",
       "slug": "rf",
-      "count": 1,
+      "count": 2,
       "apps": [
+        {
+          "name": "ProtoPirate",
+          "description": "Car key fob decoder with 11 protocols (Kia, Chrysler/Jeep, StarLine, Scher-Khan, Subaru, Fiat, Ford, Suzuki), frequency selection (315/433/868 MHz), load/save .sub files, rolling code TX.",
+          "category": "RF",
+          "version": "2.1.0",
+          "commit": "e2ad557ccc0108f5f4a3f843e839fd8a7ca80640",
+          "owner": "jsauce454",
+          "repo": "ProtoPirate-Bruce",
+          "path": "/",
+          "supported-devices": "Lilygo T-Embed CC1101",
+          "files": [
+            "ProtoPirate.js"
+          ],
+          "slug": "jsauce454/ProtoPirate-Bruce/ProtoPirate Bruce",
+          "lastUpdated": 1771432128,
+          "metadataPath": "repositories/jsauce454/ProtoPirate-Bruce/ProtoPirate Bruce/metadata.json"
+        },
         {
           "name": "RF Brute Force",
           "description": "Brute force RF signals",
@@ -338,7 +355,7 @@
           "metadataPath": "repositories/BruceDevices/firmware/RF Brute Force/metadata.json"
         }
       ],
-      "lastUpdated": 1770902042
+      "lastUpdated": 1771432128
     },
     {
       "name": "Themes",
