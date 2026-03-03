@@ -1,6 +1,6 @@
 {
   "totalCategories": 8,
-  "totalApps": 56,
+  "totalApps": 58,
   "categories": [
     {
       "name": "Audio",
@@ -24,13 +24,13 @@
       "name": "RF",
       "slug": "rf",
       "count": 2,
-      "lastUpdated": 1771432175
+      "lastUpdated": 1772244104
     },
     {
       "name": "Themes",
       "slug": "themes",
-      "count": 28,
-      "lastUpdated": 1771972336
+      "count": 30,
+      "lastUpdated": 1772535826
     },
     {
       "name": "Tools",
@@ -48,7 +48,7 @@
       "name": "WiFi",
       "slug": "wifi",
       "count": 1,
-      "lastUpdated": 1770902136
+      "lastUpdated": 1772244104
     }
   ]
 }
